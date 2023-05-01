@@ -11,10 +11,17 @@ HLSLProgram::~HLSLProgram() {
 }
 
 void HLSLProgram::use() {
+	glUseProgram(programID);
+	for (int i = 0; i < numAtribute; i++)
+		glEnableVertexAttribArray(i);
 }
 void HLSLProgram::unuse() {
+	glUseProgram(0);
+	for (int i = 0; i < numAtribute; i++)
+		glDisableVertexAttribArray(i);
 }
 void HLSLProgram::addAtribute(const string attributeName) {
+	glBindAttribLocation(programID, numAtribute++, attributeName.c_str());
 }
 void HLSLProgram::compileShaders(const string& vertexShaderFilePath, const string& fragmentShaderFilePath){
 	programID = glCreateProgram();
@@ -50,7 +57,7 @@ void HLSLProgram::compileShader(const string& shaderPath, GLuint id) {
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLenght);
 		vector<GLchar> infolog(maxLenght);
 		glGetShaderInfoLog(id, maxLenght, &maxLenght, &infolog[0]);
-		fatalError("Shader " + shaderPath + " could not compiled " + printf("%s", &(infolog[0])));
+		fatalError("Shader could not compiled " + printf("%s", &(infolog[0])));
 		glDeleteShader(id);
 		return;
 	}
@@ -69,13 +76,11 @@ void HLSLProgram::linkShader() {
 		glDeleteProgram(programID);
 		fatalError("Shader couldn't link " + printf("%s", &(infolog[0])));
 		glDeleteShader(vertexShaderID);
-		glDetachShader(fragmentShaderID);
+		glDeleteShader(fragmentShaderID);
 		return;
 	}
 	glDetachShader(programID, vertexShaderID);
 	glDetachShader(programID, fragmentShaderID);
 	glDeleteShader(vertexShaderID);
-	glDetachShader(fragmentShaderID);
-
-
+	glDeleteShader(fragmentShaderID);
 }

@@ -20,7 +20,6 @@ struct Color{
 		g = _g;
 		b = _b;
 		a = _a;
-		glColor4f(r, g, b, a);
 	}
 };
 struct Vertex{

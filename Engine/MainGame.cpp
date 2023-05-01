@@ -27,6 +27,14 @@ void MainGame::processInput() {
 	}
 }
 
+void MainGame::initShaders()
+{
+	program.compileShaders("Shaders/colorShaderVert.txt", "Shaders/colorShaderFrag.txt");
+	program.addAtribute("vertexPosition");
+	program.addAtribute("vertexColor");
+	program.linkShader();//Puente entre código y shader que tiene como función cerrar el puente
+}
+
 void MainGame::init() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
@@ -39,13 +47,17 @@ void MainGame::init() {
 		fatalError("GLEW not initialized");
 	}
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);//La Candidad de pantallas
-	glClearColor(0.0f, 0.2f, 1.0f, 1.0f);//R, G, B, A(Transparencia)
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);//R, G, B, A(Transparencia)
+	initShaders();
 }
 
 void MainGame::draw() {
 	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	program.use();
 	sprite.draw();
+	sprite1.draw();
+	program.unuse();
 	//si tengo elementos actualizo
 	SDL_GL_SwapWindow(window);//Intercambia las pantallas en cada actualización
 }
@@ -58,5 +70,6 @@ void MainGame::update() {
 void MainGame::run() {
 	init();
 	sprite.init(-1, -1, 1, 1);
+	sprite1.init(0, 0, 1, 1);
 	update();
 }

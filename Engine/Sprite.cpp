@@ -45,10 +45,10 @@ void Sprite::init(float x, float y, int width, int height) {
 	vertexData[4].setPosition(x + width, y);
 	vertexData[5].setPosition(x + width, y + height);
 	for (int i = 0; i < 6; i++) {
-		vertexData[i].setColor(1.0, 0, 0, 1.0);
+		vertexData[i].setColor(255, 255, 0, 255);
 	}
-	//vertexData[2].setColor(0, 0, 1.0, 1.0);
-	//vertexData[4].setColor(0, 0.5, 0, 1.0);
+	vertexData[2].setColor(0, 0, 255, 255);
+	vertexData[3].setColor(0, 255, 0, 255);
 	glBindBuffer(GL_ARRAY_BUFFER, vboID);//Carga la información
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);//Procesa la información
 	glBindBuffer(GL_ARRAY_BUFFER, 0);//Libera la información almacenada
