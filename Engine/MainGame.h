@@ -3,6 +3,8 @@
 #include <GL/eglew.h>
 #include "Sprite.h"
 #include "HLSLProgram.h"
+#include <vector>
+#include <time.h>
 
 enum class GameState {
 	PLAY,EXIT
@@ -16,6 +18,7 @@ private:
 	HLSLProgram program;
 	Sprite sprite;
 	Sprite sprite1;
+	vector<Sprite> sprites;
 	void init();
 	void processInput();
 	void initShaders();

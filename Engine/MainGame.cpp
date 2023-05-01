@@ -55,21 +55,31 @@ void MainGame::draw() {
 	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	program.use();
-	sprite.draw();
-	sprite1.draw();
+	//sprite.draw();
+	//sprite1.draw();
+	for (int i = 0; i < sprites.size(); i++)
+		sprites.at(i).draw();
 	program.unuse();
 	//si tengo elementos actualizo
 	SDL_GL_SwapWindow(window);//Intercambia las pantallas en cada actualización
 }
 void MainGame::update() {
+	srand(time(NULL));
+	int aux;
+	time_t ti = time(NULL);
 	while (gameState != GameState::EXIT) {
+		time_t tf = time(NULL);
+		if (difftime(tf, ti) >= 1 && sprites.size() < 10) {
+			((rand() % 10) % 2 == 0) ? aux = 1 : aux = -1;
+			sprites.push_back(Sprite());
+			sprites.back().init(((float)(rand() % 8 + 1) / 10) * aux, ((float)(rand() % 8 + 1) / 10) * aux, 1, 1);
+			ti = time(NULL);
+		}
 		draw();
 		processInput();
 	}
 }
 void MainGame::run() {
 	init();
-	sprite.init(-1, -1, 1, 1);
-	sprite1.init(0, 0, 1, 1);
 	update();
 }

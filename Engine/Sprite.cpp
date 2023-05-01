@@ -38,12 +38,12 @@ void Sprite::init(float x, float y, int width, int height) {
 	vertexData[11] = y + height;*/
 
 	Vertex vertexData[6];
-	vertexData[0].setPosition(x + width, y + height);
-	vertexData[1].setPosition(x, y + height);
+	vertexData[0].setPosition(x + (float)width / 4, y + (float)height / 4);
+	vertexData[1].setPosition(x, y + (float)height / 4);
 	vertexData[2].setPosition(x, y);
 	vertexData[3].setPosition(x, y);
-	vertexData[4].setPosition(x + width, y);
-	vertexData[5].setPosition(x + width, y + height);
+	vertexData[4].setPosition(x + (float)width / 4, y);
+	vertexData[5].setPosition(x + (float)width / 4, y + (float)height / 4);
 	for (int i = 0; i < 6; i++) {
 		vertexData[i].setColor(255, 255, 0, 255);
 	}
