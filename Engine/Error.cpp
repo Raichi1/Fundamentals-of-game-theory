@@ -1,7 +1,8 @@
 #include <iostream>
+#include "Error.h"
 using namespace std;
 
-void faltaError(string errorString) {
+void fatalError(string errorString) {
 	cout << errorString << endl;
 	cout << "Enter any key to quit" << endl;
 	int tmp;

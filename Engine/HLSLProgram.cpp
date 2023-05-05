@@ -2,6 +2,7 @@
 #include "Error.h"
 #include <fstream>
 #include <vector>
+#include <iostream>
 using namespace std;
 
 HLSLProgram::HLSLProgram():programID(0),vertexShaderID(0),fragmentShaderID(0), numAtribute(0) {
@@ -9,14 +10,25 @@ HLSLProgram::HLSLProgram():programID(0),vertexShaderID(0),fragmentShaderID(0), n
 
 HLSLProgram::~HLSLProgram() {
 }
+void HLSLProgram::addAtribute(const string attributeName) {
+	glBindAttribLocation(programID, numAtribute++, attributeName.c_str());//Setea los atributos -> Comunicación entre shader y el atributo 
+}
 
 void HLSLProgram::use() {
+	glUseProgram(programID);
+	for (int i = 0; i < numAtribute; i++) {
+		glEnableVertexAttribArray(i);
+	}
 }
+
 void HLSLProgram::unuse() {
+	glUseProgram(0);//Regresa la memoria a su estado normal
+	for (int i = 0; i < numAtribute; i++) {
+		glDisableVertexAttribArray(i);
+	}
 }
-void HLSLProgram::addAtribute(const string attributeName) {
-}
-void HLSLProgram::compileShaders(const string& vertexShaderFilePath, const string& fragmentShaderFilePath){
+
+void HLSLProgram::compileShaders(const string& vertexShaderFilePath, const string& fragmentShaderFilePath) {
 	programID = glCreateProgram();
 	vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	if (vertexShaderID == 0) {
@@ -29,6 +41,7 @@ void HLSLProgram::compileShaders(const string& vertexShaderFilePath, const strin
 	compileShader(vertexShaderFilePath, vertexShaderID);
 	compileShader(fragmentShaderFilePath, fragmentShaderID);
 }
+
 void HLSLProgram::compileShader(const string& shaderPath, GLuint id) {
 	string filecontent = "";
 	string line = "";
@@ -50,11 +63,13 @@ void HLSLProgram::compileShader(const string& shaderPath, GLuint id) {
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLenght);
 		vector<GLchar> infolog(maxLenght);
 		glGetShaderInfoLog(id, maxLenght, &maxLenght, &infolog[0]);
-		fatalError("Shader " + shaderPath + " could not compiled " + printf("%s", &(infolog[0])));
+		fatalError("Shader could not compiled " + printf("%s", &(infolog[0])));
 		glDeleteShader(id);
 		return;
 	}
 }
+
+
 void HLSLProgram::linkShader() {
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
@@ -69,13 +84,20 @@ void HLSLProgram::linkShader() {
 		glDeleteProgram(programID);
 		fatalError("Shader couldn't link " + printf("%s", &(infolog[0])));
 		glDeleteShader(vertexShaderID);
-		glDetachShader(fragmentShaderID);
+		glDeleteShader(fragmentShaderID);
 		return;
 	}
 	glDetachShader(programID, vertexShaderID);
 	glDetachShader(programID, fragmentShaderID);
 	glDeleteShader(vertexShaderID);
-	glDetachShader(fragmentShaderID);
+	glDeleteShader(fragmentShaderID);
+}
 
-
+GLuint HLSLProgram::getUniformLocation(const string& name)
+{
+	GLuint location = glGetUniformLocation(programID, name.c_str());
+	if (location == GL_INVALID_INDEX) {
+		fatalError("Unixform " + name + " not found");
+	}
+	return location;
 }
