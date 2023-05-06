@@ -10,6 +10,7 @@ MainGame::MainGame() {
 	height = 600;
 	gameState = GameState::PLAY;
 	time = 0;
+	camera2D.init(width, height);
 }
 
 MainGame::~MainGame() {
@@ -24,6 +25,23 @@ void MainGame::initShaders() {
 	program.linkShader();
 }
 
+void MainGame::handleInput()
+{
+	if (inputManager.isKeyPressed(SDLK_w)) {
+		cout << "Presionando W" << endl;
+		camera2D.setPosition(camera2D.getPosition() + glm::vec2(0.0, 5.0));
+	}
+	if (inputManager.isKeyPressed(SDLK_a)) {
+		cout << "Presionando A" << endl;
+	}
+	if (inputManager.isKeyPressed(SDLK_s)) {
+		cout << "Presionando S" << endl;
+	}
+	if (inputManager.isKeyPressed(SDLK_d)) {
+		cout << "Presionando D" << endl;
+	}
+}
+
 void MainGame::processInput() {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
@@ -32,10 +50,18 @@ void MainGame::processInput() {
 			gameState = GameState::EXIT;
 			break;
 		case SDL_MOUSEMOTION:
-			cout << event.motion.x << ", " << event.motion.y << endl;
+			inputManager.SetMouseCoords(event.motion.x, event.motion.y);
+			//cout << event.motion.x << ", " << event.motion.y << endl;
+			break;
+		case SDL_KEYUP:
+			inputManager.releaseKey(event.key.keysym.sym);
+			break;
+		case SDL_KEYDOWN:
+			inputManager.pressKey(event.key.keysym.sym);
 			break;
 		}
 	}
+	handleInput();
 }
 
 void MainGame::init() {
@@ -59,6 +85,9 @@ void MainGame::draw() {
 	GLuint timeLocation = program.getUniformLocation("time");
 	glUniform1f(timeLocation, time);
 	time += 0.002;
+	glm::mat4 cameraMatrix = camera2D.getCameraMatrix();
+	GLuint pCameraLocation = program.getUniformLocation("pCamera");
+	glUniformMatrix4fv(pCameraLocation, 1, GL_FALSE, &(cameraMatrix[0][0]));
 	GLuint imageLocation = program.getUniformLocation("myImage");
 	glUniform1i(imageLocation, 0);
 	sprite.draw();
