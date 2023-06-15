@@ -1,6 +1,7 @@
 #include "Level.h"
 #include <fstream>
 #include "ResourceManager.h"
+#include <iostream>
 #include "Error.h"
 
 Level::Level(const string& fileName)

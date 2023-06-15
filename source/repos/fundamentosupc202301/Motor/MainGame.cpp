@@ -99,23 +99,23 @@ void MainGame::initLevel() {
 	currentLevel = 0;
 	//inicializar humans,player y zombie
 	player = new Player();
-	player->init(2.0f, levels[currentLevel]->getPlayerPosition(), &inputManager);
+	player->init(4.0f, levels[currentLevel]->getPlayerPosition(), & inputManager);
 	spriteBatch.init();
 
 	std::mt19937 randomEngine(time(nullptr));
-	std::uniform_int_distribution<int>randPosX(
-		1, levels[currentLevel]->getWidth() - 2);
-	std::uniform_int_distribution<int>randPosY(
-		1, levels[currentLevel]->getHeight() - 2);
+	std::uniform_int_distribution<int>randPosX(1, levels[currentLevel]->getWidth() - 2);
+	std::uniform_int_distribution<int>randPosY(1, levels[currentLevel]->getHeight() - 2);
 
-	for (size_t i = 0; i < levels[currentLevel]->getNumHumans(); i++)
-	{
+	for (size_t i = 0; i < levels[currentLevel]->getNumHumans(); i++){
 		humans.push_back(new Human());
-		glm::vec2 pos(randPosX(randomEngine) * TILE_WIDTH,
-			randPosY(randomEngine) * TILE_WIDTH);
+		glm::vec2 pos(randPosX(randomEngine) * TILE_WIDTH, randPosY(randomEngine) * TILE_WIDTH);
 		humans.back()->init(1.0f, pos);
 	}
-
+	cout << levels[currentLevel]->getZombiesPosition().size() << endl;
+	for (size_t i = 0; i < levels[currentLevel]->getZombiesPosition().size(); ++i) {
+		zombies.push_back(new Zombie());
+		zombies.back()->init(1.0f, levels[currentLevel]->getZombiesPosition()[i]);
+	}
 }
 
 void MainGame::draw() {
@@ -132,9 +132,11 @@ void MainGame::draw() {
 	spriteBatch.begin();
 	levels[currentLevel]->draw();
 	player->draw(spriteBatch);
-	for (size_t i = 0; i < humans.size(); i++)
-	{
+	for (size_t i = 0; i < humans.size(); i++){
 		humans[i]->draw(spriteBatch);
+	}
+	for (size_t i = 0; i < zombies.size(); ++i) {
+		zombies[i]->draw(spriteBatch);
 	}
 	spriteBatch.end();
 	spriteBatch.renderBatch();
@@ -150,8 +152,7 @@ void MainGame::run() {
 
 void MainGame::updateElements() {
 	player->update(levels[currentLevel]->getLevelData(), humans, zombies);
-	for (size_t i = 0; i < humans.size(); i++)
-	{
+	for (size_t i = 0; i < humans.size(); i++) {
 		humans[i]->update(levels[currentLevel]->getLevelData(),humans,zombies);
 	}
 }
